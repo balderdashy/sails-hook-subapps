@@ -1,0 +1,32 @@
+{
+  "name": "sails-hook-subapps",
+  "version": "0.11.0",
+  "description": "Sails hook for importing child Sails apps into a parent app",
+  "main": "index.js",
+  "dependencies": {
+    "node-uuid": "^1.4.2",
+    "sails-build-dictionary": "^0.10.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Balderdash"
+  },
+  "contributors": [
+    {
+      "name": "Cody Stoltman"
+    },
+    {
+      "name": "Mike McNeil"
+    },
+    {
+      "name": "Scott Gress"
+    }
+  ],
+  "license": "MIT",
+  "sails": {
+    "isHook": true
+  }
+}
