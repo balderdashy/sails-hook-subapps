@@ -59,7 +59,7 @@ module.exports = function(sails) {
       };
 
       // Make sure all the adapters are forced to load
-      _.each(sails.config.subapps, function(subappConfig) {
+      _.each(sails.config[self.configKey], function(subappConfig) {
         if (subappConfig.connections) {
           _.each(subappConfig.connections, function(connection) {
             if (sails.config.connections[connection]) {
@@ -149,7 +149,7 @@ module.exports = function(sails) {
             var packageJson = module['package.json'];
 
             // Get any user-level subapp config
-            var config = (sails.config.subapps && sails.config.subapps[identity]) || {};
+            var config = (sails.config[self.configKey] && sails.config[self.configKey][identity]) || {};
 
             // Load the app
             var app = new sails.constructor();
