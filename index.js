@@ -219,9 +219,21 @@ module.exports = function(sails) {
                 // Allow more mounting options such as multiple mount points
                 // and URL rewrites
               }
-              // Loop through subapp models and expose any we've been told to
+              // Loop through subapp models and expose / map any we've been told to
               _.each(config.models, function(config, modelId) {
-                if (config.expose && loadedApp.models[modelId]) {
+
+                // If "config" is a string, it should be the name of a model in the outer app
+                if (typeof config == 'string') {
+                  // Fail if no such outer app model exists
+                  if (!sails.models[config]) {
+                    return cb(new Error("Tried to expose map subapp model `" + modelId +"` to parent app model `" + config + '`, but no such model exists in the parent app.'));
+                  }
+                  loadedApp.models[modelId] = sails.models[config];
+                }
+
+                // If "config" is an object with an "expose" key, then expose the subapp's model
+                // in the parent app
+                else if (config.expose && loadedApp.models[modelId]) {
                   var exposeAs = config.expose === true ? modelId : config.expose;
                   if (sails.models[exposeAs]) {
                     cb(new Error("Tried to expose model `" + exposeAs +"` of subapp `" + identity + '`, but a model with that identity already exists.'));
