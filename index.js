@@ -209,6 +209,9 @@ module.exports = function(sails) {
               if (err) {
                 return cb(err);
               }
+              // Add a reference to the parent app
+              loadedApp.parentApp = sails;
+
               // Add this sub app to the list of loaded apps
               self.apps[identity] = loadedApp;
               // Get the mount point (i.e. prefix for routes in the sub app)
