@@ -108,10 +108,8 @@ module.exports = function(sails) {
 
         // Apps loaded from the "subapps" folder don't need the "isSubapp" flag
         subapps = _.reduce(results.subappsFolder, function(memo, module, identity) {
-          if (module['package.json'] && module['package.json'].sails) {
-            module.appPath = path.resolve(sails.config.paths.subapps, identity);
-            memo[identity] = module;
-          }
+          module.appPath = path.resolve(sails.config.paths.subapps, identity);
+          memo[identity] = module;
           return memo;
         }, {});
 
