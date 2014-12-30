@@ -5,6 +5,10 @@ module.exports = function(sails) {
 
   return {
 
+    mountMap: {},
+
+    apps: {},
+
     defaults: {
       paths: {
         subapps: path.resolve(sails.config.appPath, 'subapps')
@@ -13,10 +17,12 @@ module.exports = function(sails) {
 
     configure: function() {
 
+      var self = this;
+
       // Set up HTTP middleware
       sails.config.http.middleware.subApps = function(req, res, next) {
         // See if the url matches any of the mount points
-        if (!sails.util.any(sails.hooks.subapps.mountMap, function(app, url) {
+        if (!sails.util.any(self.mountMap, function(app, url) {
           var regex = new RegExp("^"+url+"($|\\/)");
           if (req.url.match(regex)) {
             req.originalUrl = req.url = req.url.replace(regex,'/');
@@ -38,7 +44,7 @@ module.exports = function(sails) {
       var defaultRouter = sails.router.route;
       sails.router.route = function(req, res) {
         // See if the url matches any of the mount points
-        if (!sails.util.any(sails.hooks.subapps.mountMap, function(app, url) {
+        if (!sails.util.any(self.mountMap, function(app, url) {
           var regex = new RegExp("^"+url+"($|\\/)");
           if (req.url.match(regex)) {
             req.originalUrl = req.url = req.url.replace(regex,'/');
@@ -125,8 +131,6 @@ module.exports = function(sails) {
     initialize: function(cb) {
 
       var self = this;
-      self.apps = {};
-      self.mountMap = {};
       var eventsToWaitFor = [];
       if (sails.hooks.orm) {
         eventsToWaitFor.push('hook:orm:loaded');
