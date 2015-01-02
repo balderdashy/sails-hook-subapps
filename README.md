@@ -1,3 +1,7 @@
+# Experimental
+
+Offering zero support for this right now, use at your own risk and know that parts may change substantially.  Requires Sails v0.11.x.
+
 ### Holy smokes, it's the "plugin" we've all been waiting for.
 
 In your `sails.config.subapps`:
