@@ -168,6 +168,14 @@ module.exports = function(sails) {
               return memo;
             }, {localDiskDb: false});
 
+            // User-level config for the subapp
+            // This config will be merged into the subapp's sails.config
+            config.config = config.config || {};
+
+            // Set the user-level mount config
+            // The subapp may use this for paths to static assets
+            config.config.mount = (config.mount || (packageJson.sails && packageJson.sails.mount) || '/' + (packageJson.name));
+
             // Load the Sails app for the subapp, using the ".config" object of thr subapp config
             // if any, extended with some important configuration properties of our own.
             app.load(_.extend({}, config.config, {
