@@ -216,7 +216,7 @@ module.exports = function(sails) {
               // Add this sub app to the list of loaded apps
               self.apps[identity] = loadedApp;
               // Get the mount point (i.e. prefix for routes in the sub app)
-              var mountConfig = (packageJson.sails && packageJson.sails.mount) || '/' + appName;
+              var mountConfig = config.mount || (packageJson.sails && packageJson.sails.mount) || '/' + (packageJson.name);
               if (typeof mountConfig == 'string') {
                 self.mountMap[mountConfig] = loadedApp;
               } else {
