@@ -168,9 +168,11 @@ module.exports = function(sails) {
               return memo;
             }, {localDiskDb: false});
 
-            app.load({
+            // Load the Sails app for the subapp, using the ".config" object of thr subapp config
+            // if any, extended with some important configuration properties of our own.
+            app.load(_.extend({}, config.config, {
               appPath: module.appPath,
-              // Subapps can't use globals--must use sails.models, sails.services, etc.
+              // Subapps can't merge vars into globals--must use this.sails.models, this.sails.services, etc.
               globals: false,
               // Subapps can't use grunt (yet)
               hooks: {
@@ -204,7 +206,7 @@ module.exports = function(sails) {
 
               connections: mappedConnections,
 
-            }, function(err, loadedApp) {
+            }), function(err, loadedApp) {
               if (err) {
                 return cb(err);
               }
