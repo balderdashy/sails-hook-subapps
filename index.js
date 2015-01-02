@@ -12,7 +12,8 @@ module.exports = function(sails) {
     defaults: {
       paths: {
         subapps: path.resolve(sails.config.appPath, 'subapps')
-      }
+      },
+      __configKey__: {}
     },
 
     configure: function() {
