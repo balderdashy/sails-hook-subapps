@@ -231,28 +231,56 @@ module.exports = function(sails) {
                 // Allow more mounting options such as multiple mount points
                 // and URL rewrites
               }
-              // Loop through subapp models and expose / map any we've been told to
-              _.each(config.models, function(modelConfig, modelId) {
 
-                // If "modelConfig" is a string, it should be the name of a model in the outer app
-                if (typeof modelConfig == 'string') {
-                  // Fail if no such outer app model exists
-                  if (!sails.models[modelConfig]) {
-                    return cb(new Error("Tried to expose map subapp model `" + modelId +"` to parent app model `" + modelConfig + '`, but no such model exists in the parent app.'));
-                  }
-                  loadedApp.models[modelId] = sails.models[modelConfig];
-                }
+              // Function to expose parent models to subapp, and subapp models to parent,
+              // based on `models` configuration
+              function exposeModels() {
+                // Loop through subapp models and expose / map any we've been told to
+                _.each(config.models, function(modelConfig, modelId) {
 
-                // If "modelConfig" is an object with an "expose" key, then expose the subapp's model
-                // in the parent app
-                else if (modelConfig.expose && loadedApp.models[modelId]) {
-                  var exposeAs = modelConfig.expose === true ? modelId : modelConfig.expose;
-                  if (sails.models[exposeAs]) {
-                    cb(new Error("Tried to expose model `" + exposeAs +"` of subapp `" + identity + '`, but a model with that identity already exists.'));
+                  // If "modelConfig" is a string, it should be the name of a model in the outer app
+                  if (typeof modelConfig == 'string') {
+                    // Fail if no such outer app model exists
+                    if (!sails.models[modelConfig]) {
+                      return cb(new Error("Tried to expose map subapp model `" + modelId +"` to parent app model `" + modelConfig + '`, but no such model exists in the parent app.'));
+                    }
+                    loadedApp.models[modelId] = sails.models[modelConfig];
                   }
-                  sails.models[exposeAs] = loadedApp.models[modelId];
-                }
+
+                  // If "modelConfig" is an object with an "expose" key, then expose the subapp's model
+                  // in the parent app
+                  else if (modelConfig.expose && loadedApp.models[modelId]) {
+                    var exposeAs = modelConfig.expose === true ? modelId : modelConfig.expose;
+                    if (sails.models[exposeAs]) {
+                      cb(new Error("Tried to expose model `" + exposeAs +"` of subapp `" + identity + '`, but a model with that identity already exists.'));
+                    }
+                    sails.models[exposeAs] = loadedApp.models[modelId];
+                  }
+                });                
+              }
+
+              // Do the initial model configuration
+              exposeModels();
+
+              // Remove / replace exposed subapp models during a parent ORM reload.
+              // This avoids issues where Waterline attempts to load information about
+              // subapp models that it doesn't really know anything about.
+              sails.on('hook:orm:reload', function() {
+                _.each(config.models, function(modelConfig, modelId) {
+
+                  // Delete exposed models
+                  if (modelConfig.expose && loadedApp.models[modelId]) {
+                    var exposeAs = modelConfig.expose === true ? modelId : modelConfig.expose;
+                    delete sails.models[exposeAs];
+                  }
+                });                
+
+                // Once the parent ORM is reloaded, re-expose subapp models
+                sails.once('hook:orm:reloaded', function() {
+                  exposeModels();
+                });
               });
+
               return cb();
             });
 
