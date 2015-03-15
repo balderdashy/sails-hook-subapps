@@ -1,6 +1,6 @@
 {
   "name": "sails-hook-subapps",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Sails hook for importing child Sails apps into a parent app",
   "main": "index.js",
   "dependencies": {
