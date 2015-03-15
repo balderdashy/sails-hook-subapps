@@ -1,7 +1,11 @@
 var buildDictionary = require('sails-build-dictionary');
 var path = require('path');
 var uuid = require('node-uuid');
+var async = require('async');
+
 module.exports = function(sails) {
+
+  var _ = sails.util;
 
   return {
 

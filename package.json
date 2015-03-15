@@ -4,6 +4,7 @@
   "description": "Sails hook for importing child Sails apps into a parent app",
   "main": "index.js",
   "dependencies": {
+    "async": "^0.9.0",
     "node-uuid": "^1.4.2",
     "sails-build-dictionary": "^0.10.1"
   },
